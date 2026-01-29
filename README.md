@@ -18,19 +18,27 @@ Perfect for parallel feature development, especially when using AI coding assist
 # Install (add to PATH)
 git clone https://github.com/nickisobrien/worktree-sessions.git ~/.wt
 echo 'export PATH="$HOME/.wt:$PATH"' >> ~/.zshrc
+```
 
-# Initialize in your project
+### Option A: AI-Guided Setup (Recommended)
+
+Let Claude configure wt for your project:
+
+```bash
 cd your-project
-wt init
+~/.wt/setup.sh
+```
 
-# Edit configuration
-vim .wt/config.sh
+This launches an interactive Claude session that analyzes your project and sets up the appropriate configuration and hooks.
 
-# Create your first worktree
-wt new my-feature
+### Option B: Manual Setup
 
-# Launch control center
-wt
+```bash
+cd your-project
+wt init              # Creates .wt/config.sh
+vim .wt/config.sh    # Configure dev command, layout, etc.
+wt new my-feature    # Create your first worktree
+wt                   # Launch control center
 ```
 
 ## Requirements
