@@ -1,0 +1,92 @@
+#!/bin/bash
+# wt - Git worktree session manager
+# https://github.com/nickisobrien/worktree-sessions
+
+set -e
+
+WT_VERSION="0.1.0"
+WT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Load core library
+source "$WT_ROOT/lib/core.sh"
+
+# Find and load project config
+load_project_config
+
+# Route to command
+COMMAND="${1:-control}"
+shift 2>/dev/null || true
+
+case "$COMMAND" in
+    new|n)
+        source "$WT_ROOT/commands/new.sh"
+        wt_new "$@"
+        ;;
+    list|ls|l)
+        source "$WT_ROOT/commands/list.sh"
+        wt_list "$@"
+        ;;
+    kill|k)
+        source "$WT_ROOT/commands/kill.sh"
+        wt_kill "$@"
+        ;;
+    kill-all|ka)
+        source "$WT_ROOT/commands/kill-all.sh"
+        wt_kill_all "$@"
+        ;;
+    control|c|"")
+        source "$WT_ROOT/commands/control.sh"
+        wt_control "$@"
+        ;;
+    init)
+        source "$WT_ROOT/commands/init.sh"
+        wt_init "$@"
+        ;;
+    config)
+        source "$WT_ROOT/commands/config.sh"
+        wt_config "$@"
+        ;;
+    ports)
+        source "$WT_ROOT/lib/ports.sh"
+        wt_ports_cmd "$@"
+        ;;
+    version|--version|-v)
+        echo "wt $WT_VERSION"
+        ;;
+    help|--help|-h)
+        cat << 'EOF'
+wt - Git worktree session manager
+
+Manage multiple development sessions with git worktrees and tmux.
+Each worktree gets an isolated branch, port, and tmux window.
+
+Usage: wt <command> [options]
+
+Commands:
+  init              Initialize wt in current project
+  new, n <name>     Create a new worktree
+  list, ls, l       List all worktrees
+  kill, k <name>    Kill a worktree
+  kill-all, ka      Kill all worktrees
+  control, c        Launch interactive control center (default)
+  config            Manage configuration
+  ports             Manage port allocations
+
+Options:
+  --help, -h        Show this help
+  --version, -v     Show version
+
+Getting started:
+  cd your-project
+  wt init           # Creates .wt/config.sh
+  wt new feature    # Creates worktree with tmux session
+
+More info: https://github.com/nickisobrien/worktree-sessions
+EOF
+        ;;
+    *)
+        error "Unknown command: $COMMAND"
+        echo "Run 'wt help' for usage"
+        exit 1
+        ;;
+esac
